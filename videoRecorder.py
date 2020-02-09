@@ -3,15 +3,15 @@ import cv2
 from time import time
 import numpy as np
 
-framerate = 60
-record_time = 5 # in seconds
-out_shape = (1920,1200)
+framerate = 24
+record_time = 20 # in seconds
+out_shape = (1920,1080)
 
 # conecting to the first available camera
 camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
 
 # Grabing Continusely (video) with minimal delay
-camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly) 
+camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 converter = pylon.ImageFormatConverter()
 
 print("Reading file back to camera's node map...")
@@ -26,9 +26,11 @@ converter.OutputPixelFormat = pylon.PixelType_BGR8packed
 converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
 #out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (2448,2048)) # AVI Capture
-fourcc = cv2.VideoWriter_fourcc(*'H264')
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
-out = cv2.VideoWriter('outpyTeste.mp4', fourcc , framerate, out_shape) # MP4 Capture
+fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
+
+out = cv2.VideoWriter('outpyH264.mkv', fourcc , framerate, out_shape) # MP4 Capture
 start_time = 0
 counter = 0
 counter2 = 0
@@ -56,7 +58,7 @@ while camera.IsGrabbing:
 
     grabResult.Release()
 
-    if counter > 60:
+    if counter > framerate:
         print('Recording... FPS:' + str(round(1/(time()-start_time))) + '  Temp:' + str(camera.DeviceTemperature.GetValue()))
         counter = 0
         mean_fps.append(round(1/(time()-start_time)))
