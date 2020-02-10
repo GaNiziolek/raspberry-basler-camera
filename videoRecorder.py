@@ -4,7 +4,7 @@ from time import time
 import numpy as np
 
 framerate = 24
-record_time = 20 # in seconds
+record_time = 30 # in seconds
 out_shape = (1920,1080)
 
 # conecting to the first available camera
@@ -26,15 +26,16 @@ converter.OutputPixelFormat = pylon.PixelType_BGR8packed
 converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
 #out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (2448,2048)) # AVI Capture
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+fourcc = cv2.VideoWriter_fourcc(*'H264')
 
-fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
+#fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
 
-out = cv2.VideoWriter('outpyH264.mkv', fourcc , framerate, out_shape) # MP4 Capture
+out = cv2.VideoWriter('outpyH264.mp4', fourcc , framerate, out_shape) # MP4 Capture
 start_time = 0
 counter = 0
 counter2 = 0
 mean_fps = []
+#cv2.namedWindow('title', cv2.WINDOW_NORMAL)
 while camera.IsGrabbing:
     counter += 1
     counter2 += 1
@@ -48,7 +49,7 @@ while camera.IsGrabbing:
 
         #print(img.shape[0])
 
-        #cv2.namedWindow('title', cv2.WINDOW_NORMAL)
+        
         #cv2.imshow('title', img)
         out.write(img)
 
