@@ -3,16 +3,15 @@ import cv2
 from time import time
 import numpy as np
 import os
-from gpiozero import CPUTemperature
+#from gpiozero import CPUTemperature
 from subprocess import check_output
 
 # Configure GPIOZERO lib to monitore the CPU TEMP
-os.environ['GPIOZERO_PIN_FACTORY'] = os.environ.get('GPIOZERO_PIN_FACTORY', 'mock')
+#os.environ['GPIOZERO_PIN_FACTORY'] = os.environ.get('GPIOZERO_PIN_FACTORY', 'mock')
 
-framerate = 30
+framerate = 120
 record_time = 20 # in seconds
 out_shape = (1920,1080)
-
 
 # conecting to the first available camera
 camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
@@ -27,6 +26,7 @@ pylon.FeaturePersistence.Load('cameraFeatures.pfs', camera.GetNodeMap(), False)
 # Setting parameters
 camera.AcquisitionFrameRateEnable.SetValue(True)
 camera.AcquisitionFrameRate.SetValue(framerate)
+camera.ExposureTime.SetValue(1000000/framerate)
 print("Camera capturing in: " + str(camera.AcquisitionFrameRate.GetValue()) + " fps.")
 print("Camera shape: " + str(camera.Width.GetValue()) + "x" + str(camera.Height.GetValue()))
 
@@ -39,7 +39,7 @@ fourcc = cv2.VideoWriter_fourcc(*'MPEG')
 
 #fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
 
-out = cv2.VideoWriter('outpyMPEG.mkv', fourcc , framerate, out_shape)
+out = cv2.VideoWriter('outpy-1.mp4', -1 , framerate, out_shape)
 start_time = 0
 counter = 0
 counter2 = 0
@@ -69,12 +69,17 @@ while camera.IsGrabbing:
     grabResult.Release()
 
     if counter > framerate:
-        cpu_temp  = CPUTemperature()
-        cpu_volts = str(check_output(['sudo', 'vcgencmd', 'measure_volts']))[7:-3] 
-        print(' {:02d}'.format(round(1/(time()-start_time))) +
-              ' | ' + str(camera.DeviceTemperature.GetValue()) + '°C' +
-              '       | ' + str(round(cpu_temp.temperature, 1)) + '°C' +
-              '   | ' + cpu_volts)
+        #cpu_temp  = CPUTemperature()
+        cpu_temp  = 0
+        #cpu_volts = str(check_output(['sudo', 'vcgencmd', 'measure_volts']))[7:-3] 
+        cpu_volts = 0
+        #print(' {:02d}'.format(round(1/(time()-start_time))) +
+        #      ' | ' + str(camera.DeviceTemperature.GetValue()) + '°C' +
+        #      '       | ' + str(round(cpu_temp.temperature, 1)) + '°C' +
+        #      '   | ' + cpu_volts)
+        print(' {:02d}'.format(round(1/(time()-start_time))) + 
+              ' | ' + str(camera.DeviceTemperature.GetValue()) + '°C')
+
         counter = 0
         mean_fps.append(round(1/(time()-start_time)))
 # Releasing the resource    
