@@ -2,6 +2,12 @@ from pypylon import pylon
 import cv2
 from time import time
 import numpy as np
+import os
+from gpiozero import CPUTemperature
+from subprocess import check_output
+
+# Configure GPIOZERO lib to monitore the CPU TEMP
+os.environ['GPIOZERO_PIN_FACTORY'] = os.environ.get('GPIOZERO_PIN_FACTORY', 'mock')
 
 framerate = 30
 record_time = 20 # in seconds
@@ -29,16 +35,19 @@ converter.OutputPixelFormat = pylon.PixelType_BGR8packed
 #converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
 #out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (2448,2048)) # AVI Capture
-fourcc = cv2.VideoWriter_fourcc(*'XVID')
+fourcc = cv2.VideoWriter_fourcc(*'MPEG')
 
 #fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
 
-out = cv2.VideoWriter('outpyXVID.avi', fourcc , framerate, out_shape) # MP4 Capture
+out = cv2.VideoWriter('outpyMPEG.mkv', fourcc , framerate, out_shape)
 start_time = 0
 counter = 0
 counter2 = 0
 mean_fps = []
 #cv2.namedWindow('title', cv2.WINDOW_NORMAL)
+
+# Create the Header
+print('FPS | Camera Temp. | CPU Temp | Core Volts')
 while camera.IsGrabbing:
     counter += 1
     counter2 += 1
@@ -60,10 +69,14 @@ while camera.IsGrabbing:
     grabResult.Release()
 
     if counter > framerate:
-        print('Recording... FPS:' + str(round(1/(time()-start_time))) + '  Temp:' + str(camera.DeviceTemperature.GetValue()))
+        cpu_temp  = CPUTemperature()
+        cpu_volts = str(check_output(['sudo', 'vcgencmd', 'measure_volts']))[7:-3] 
+        print(' {:02d}'.format(round(1/(time()-start_time))) +
+              ' | ' + str(camera.DeviceTemperature.GetValue()) + '°C' +
+              '       | ' + str(round(cpu_temp.temperature, 1)) + '°C' +
+              '   | ' + cpu_volts)
         counter = 0
         mean_fps.append(round(1/(time()-start_time)))
-
 # Releasing the resource    
 camera.StopGrabbing()
 print(np.mean(mean_fps))
