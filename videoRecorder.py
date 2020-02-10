@@ -25,7 +25,7 @@ print("Camera capturing in: " + str(camera.AcquisitionFrameRate.GetValue()) + " 
 print("Camera shape: " + str(camera.Width.GetValue()) + "x" + str(camera.Height.GetValue()))
 
 # converting to opencv bgr format
-#converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+converter.OutputPixelFormat = pylon.PixelType_BGR8packed
 #converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
 #out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (2448,2048)) # AVI Capture
