@@ -3,9 +3,10 @@ import cv2
 from time import time
 import numpy as np
 
-framerate = 24
-record_time = 30 # in seconds
+framerate = 30
+record_time = 20 # in seconds
 out_shape = (1920,1080)
+
 
 # conecting to the first available camera
 camera = pylon.InstantCamera(pylon.TlFactory.GetInstance().CreateFirstDevice())
@@ -20,17 +21,19 @@ pylon.FeaturePersistence.Load('cameraFeatures.pfs', camera.GetNodeMap(), False)
 # Setting parameters
 camera.AcquisitionFrameRateEnable.SetValue(True)
 camera.AcquisitionFrameRate.SetValue(framerate)
+print("Camera capturing in: " + str(camera.AcquisitionFrameRate.GetValue()) + " fps.")
+print("Camera shape: " + str(camera.Width.GetValue()) + "x" + str(camera.Height.GetValue()))
 
 # converting to opencv bgr format
-converter.OutputPixelFormat = pylon.PixelType_BGR8packed
-converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
+#converter.OutputPixelFormat = pylon.PixelType_BGR8packed
+#converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
 #out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (2448,2048)) # AVI Capture
-fourcc = cv2.VideoWriter_fourcc(*'H264')
+fourcc = cv2.VideoWriter_fourcc(*'XVID')
 
 #fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
 
-out = cv2.VideoWriter('outpyH264.mp4', fourcc , framerate, out_shape) # MP4 Capture
+out = cv2.VideoWriter('outpyXVID.avi', fourcc , framerate, out_shape) # MP4 Capture
 start_time = 0
 counter = 0
 counter2 = 0
@@ -46,9 +49,6 @@ while camera.IsGrabbing:
         # Access the image data
         image = converter.Convert(grabResult)
         img = image.GetArray()
-
-        #print(img.shape[0])
-
         
         #cv2.imshow('title', img)
         out.write(img)
