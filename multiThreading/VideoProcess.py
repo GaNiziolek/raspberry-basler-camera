@@ -3,10 +3,6 @@ import cv2
 from pypylon import pylon
 
 class VideoProcess:
-    
-    """
-    Class that continuously shows a frame using a dedicated thread.
-    """
 
     def __init__(self, unprocessed_img):
         self.unprocessed_img = unprocessed_img
@@ -21,9 +17,15 @@ class VideoProcess:
 
     def process(self):
         while not self.stopped:
-            self.image = self.converter.Convert(self.unprocessed_img)
-            self.final_img = self.image.GetArray()
+            if not self.unprocessed_img == None:
+                print(self.unprocessed_img)
+                self.image = self.converter.Convert(self.unprocessed_img)
+                self.final_img = self.image.GetArray()
+                print("Frame converted")
+                #cv2.imshow('img', self.final_img)
+                #cv2.waitKey(27)
+        print('VideoProcess stoped')
 
-        print('Video converter stoped')
     def stop(self):
+        print('VideoProcess will be stoped')
         self.stopped = True

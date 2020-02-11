@@ -10,7 +10,7 @@ from subprocess import check_output
 #os.environ['GPIOZERO_PIN_FACTORY'] = os.environ.get('GPIOZERO_PIN_FACTORY', 'mock')
 
 framerate = 120
-record_time = 20 # in seconds
+record_time = 5 # in seconds
 out_shape = (1920,1080)
 
 # conecting to the first available camera
@@ -35,11 +35,11 @@ converter.OutputPixelFormat = pylon.PixelType_BGR8packed
 #converter.OutputBitAlignment = pylon.OutputBitAlignment_MsbAligned
 
 #out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (2448,2048)) # AVI Capture
-fourcc = cv2.VideoWriter_fourcc(*'MPEG')
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 
 #fourcc = cv2.VideoWriter_fourcc('H','2','6','4')
 
-out = cv2.VideoWriter('outpy-1.mp4', -1 , framerate, out_shape)
+out = cv2.VideoWriter('outpyDIVX.avi', fourcc , framerate, out_shape)
 start_time = 0
 counter = 0
 counter2 = 0
