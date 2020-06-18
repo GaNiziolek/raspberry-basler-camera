@@ -17,7 +17,7 @@ out_shape = (1920,1080)
 
 def threadBoth(source=0):
 
-    video_getter = VideoGet(framerate, out_shape, record_time).start()
+    video_getter = VideoGet(framerate, out_shape, record_time, virtual=True).start()
     #video_process = VideoProcess(video_getter.unprocessed_img).start()
     #video_recorder = VideoRecorder(video_getter.final_img, framerate, out_shape).start()
     sleep(1)
